@@ -1,3 +1,4 @@
+
 'use strict'
 
 const SIZE = 4;
@@ -16,11 +17,18 @@ var gGame = {
     isOn: false,
     shownCount: 0,
     markedCount: 0,
-    secsPassed: 0
+    secsPassed: 0,
+    minPassed: 0,
+    timerInterval: 0,
 }
 
 
 function initGame() {
+    gGame.isOn = false;
+    gGame.shownCount = 0;
+    gGame.markedCount = 0;
+    gGame.secsPassed = 0;
+    gGame.minPassed = 0;
     gBoard = buildBoard();
     getRandomMine(MINES);
     renderBoard(gBoard);
@@ -59,7 +67,7 @@ function renderBoard(board) {
             }
 
             // cell = cell.isMine ? MINE : '';
-            var className = `cell cell${i}-${j}`;
+            var className = `unrevealed cell-${i}-${j}`;
             strHTML += `<td class="${className}" onclick="cellClicked(this, ${i}, ${j})"> ${cell} </td>`;
         }
         strHTML += '</tr>'
@@ -86,10 +94,15 @@ function setMinesNegsCount(cellI, cellJ, board) {
 }
 
 function cellClicked(elCell, i, j) {
-    elCell = elCell.innerText;
+    if (!gGame.isOn) {
+        gGame.timerInterval = setInterval(timer, 1000);
+        gGame.isOn = true;
+    }
+    if (gBoard[i][j].isMine) checkGameOver();
+    // console.log(elCell.classList);
     var numberToShow = gBoard[i][j].minesAroundCount;
 
-    if (!gBoard[i][j].isMine) elCell = numberToShow;
+    if (!gBoard[i][j].isMine) elCell.innerText = numberToShow;
     // console.log('elCellInnerText:', elCell);
 
     renderCell(i, j, numberToShow);
@@ -97,9 +110,10 @@ function cellClicked(elCell, i, j) {
 
 
 function renderCell(i, j, value) {
-    var elCell = document.querySelector(`.cell${i}-${j}`);
+    var elCell = document.querySelector(`.revealed cell-${i}-${j}`);
+    console.log(elCell.classList);
+    // console.log('elCell InnerHTML:', elCell.innerHTML);
     elCell.innerHTML = value;
-    // console.log('elCell InnerHTML:',  elCell.innerHTML);
 }
 
 function getRandomMine(num) {
@@ -108,7 +122,7 @@ function getRandomMine(num) {
     for (var i = 0; i < num; i++) {
         var tmpIdx = getRandomInt(0, emptyArr.length - 1);
         var emptyCell = emptyArr[tmpIdx];
-        console.log('emptyCell:', tmpIdx);
+        // console.log('emptyCell:', tmpIdx);
         var cellWithNewValue = gBoard[emptyCell.i][emptyCell.j];
         cellWithNewValue.isMine = true;
         emptyArr.splice(tmpIdx, 1);
@@ -128,7 +142,6 @@ function expandShown(board, elCell) {
 
 }
 
-
 // return an array of location objects of empty cells in given mat
 function getEmptyCellIdx(board) {
     var emptyArr = [];
@@ -144,11 +157,25 @@ function getEmptyCellIdx(board) {
             }
         }
     }
-    console.log('emptyArr:', emptyArr);
+    // console.log('emptyArr:', emptyArr);
 
     return emptyArr;
 }
 
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function timer() {
+    gGame.secsPassed++;
+
+    if (gGame.secsPassed === 60) {
+        gGame.secsPassed = 0;
+        gGame.minPassed++;
+    }
+    if (gGame.secsPassed <= 9) gGame.secsPassed = '0' + gGame.secsPassed;
+    // if (gGame.minPassed < 9) gGame.minPassed = '0' + gGame.minPassed; //Needs to adjust
+
+    var elTimer = document.querySelector('.timer');
+    elTimer.innerText = `0${gGame.minPassed}:${gGame.secsPassed}`; //the zero in the begining of the string is just a plaster for now
 }

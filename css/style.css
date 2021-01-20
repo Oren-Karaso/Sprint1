@@ -8,29 +8,27 @@ body {
     color: white;
 }
 
+.timer {
+    border: 2px solid black;
+    height:fit-content;
+    width: fit-content;
+}
+
 table {
-table-layout: fixed;
+    table-layout: fixed;
 }
 
-.cell {
-    background-color: rgba(253, 240, 53, 0.5);
+.unrevealed {
+    background-color: rgba(247, 225, 194, 0.247);
     color: black;
-    width: 40px;
-    height: 40px;
-    text-align: center;
-    font-size: 1.5em;  
-}
-
-.cell .unrevealed {
-    background-color: blanchedalmond;
     width: 40px;
     height: 40px;
     text-align: center;
     font-size: 1.5em;
 }
 
-.cell .revealed {
-    background-color: brown;
+.revealed {
+    background-color: rgba(236, 57, 12, 0.301);
     width: 40px;
     height: 40px;
     text-align: center;
