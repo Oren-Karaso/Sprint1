@@ -24,7 +24,7 @@ function getEmptyCellIdx(board) {
 
 //renders the cell - BUG
 function renderCell(elCell, value) {
-     elCell.innerHTML = value;
+    elCell.innerHTML = value;
 }
 
 // counts the mines around each cell
@@ -49,10 +49,10 @@ function revealBoard(board) {
             var elCell = document.querySelector(`.unrevealed cell-${i}-${j}`);
             console.log(document.querySelector(`.unrevealed cell-${i}-${j}`));
             var cellContent; //not sure if needed yet
-            if (board[i][j].isMine) {
-                cellContent = MINE;
-                renderCell(elCell, MINE);
-            }
+            if (board[i][j].isMine) cellContent = MINE;
+            else cellContent = board[i][j].minesAroundCount
+
+            renderCell(elCell, cellContent);
         }
     }
 }
