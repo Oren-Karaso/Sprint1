@@ -9,6 +9,7 @@ var gMines = 12;
 
 var mineSound = new Audio('explosion.mp3');
 var winSound = new Audio('win.mp3');
+
 var gRecord = localStorage.getItem('record');
 
 
@@ -20,6 +21,7 @@ var gLevel = {
 
 var gGame = {
     isOn: false,
+    isReseted: false,
     shownCount: 0,
     markedCount: 0,
     minesToWin: gMines,
@@ -28,19 +30,18 @@ var gGame = {
     timerInterval: 0,
     elTimer: document.querySelector('.timer'),
     minesLocArr: [],
-    howManyLives: 3
+    howManyLives: 3,
 };
 
+
 function initGame() {
-    getGameLevel();
+    if (!gGame.isReseted) getGameLevel();
+
     gGame.minesToWin = gMines;
-    // console.log('gMines:', gMines + 'gSize:', gSize + 'minesToWin:', gGame.minesToWin);
     gBoard = buildBoard();
     getRandomMine(gMines);
     renderBoard(gBoard);
-    console.log('mines location array:', gGame.minesLocArr);
-    revealMines();
-    // console.log('gBoard now:', gBoard);
+    // console.log('mines location array for developer:', gGame.minesLocArr);
 }
 
 function buildBoard() {
@@ -86,6 +87,7 @@ function renderBoard(board) {
 
 
 function resetGame() {
+
     gGame.isOn = false;
     gGame.shownCount = 0;
     gGame.markedCount = 0;
@@ -101,7 +103,10 @@ function resetGame() {
 }
 
 function firstClick(i, j) {
-    if (gBoard[i][j].isMine) resetGame();
+    if (gBoard[i][j].isMine) {
+        gGame.isReseted = true;
+        resetGame();
+    }
     else {
         gGame.timerInterval = setInterval(timer, 1000);
         gGame.isOn = true;
@@ -113,6 +118,8 @@ function checkGameOver() {
     if (gGame.howManyLives > 0) return false;
 
     gGame.isOn = false;
+    gGame.isReseted = false;
+
     clearInterval(gGame.timerInterval);
     revealMines();
     alert('Oh nooo! You have been exploded to pieces!');
@@ -124,15 +131,18 @@ function checkWin() {
 
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard.length; j++) {
-            if (gBoard[i][j].isMine && !gBoard[i][j].isMarked) return;
+            if (gBoard[i][j].isMine && !gBoard[i][j].isMarked) {
+                if (isLastCell(i, j)) continue;
+            }
             else continue;
         }
     }
     clearInterval(gGame.timerInterval);
-    
+    gGame.isReseted = false;
     gGame.isOn = false;
     revealBoard(gBoard);
-    
+
+    // document.querySelector('.h2').innerText = '😎';
     winSound.play();
     alert('Congrats! you have survived!');
     manageRecord();
@@ -142,6 +152,8 @@ function cellClicked(elCell, i, j) {
     var minesAround;
     if (!gGame.minesToWin) return;
 
+    if (gBoard[i][j].isShown) return;
+
     if (!gGame.isOn) firstClick(i, j);
 
     if (gBoard[i][j].isMine) {
@@ -149,6 +161,7 @@ function cellClicked(elCell, i, j) {
         gGame.minesToWin--;
         gGame.howManyLives--;
 
+        // document.querySelector('.h2').innerText = '🤯';
         mineSound.play();
         alert('Watch it! You have just lost a limb...')
         checkGameOver();
@@ -165,12 +178,12 @@ function cellClicked(elCell, i, j) {
 
 
 function cellMarked(elCell, i, j) {
-    if (gBoard[i][j].isMine) gGame.minesToWin--;
-    // console.log('gGame.minesToWin:', gGame.minesToWin);
-    if (!gBoard[i][j].isMarked) {
+    if (!gBoard[i][j].isMarked && !gBoard[i][j].isShown) {
         gBoard[i][j].isMarked = true;
         renderCell(elCell, FLAG);
-    }
+    } else return;
+    
+    if (gBoard[i][j].isMine) gGame.minesToWin--;
     checkWin();
 }
 

@@ -116,6 +116,17 @@ function upDateScore() {
 
 }
 
+function isLastCell(indexi, indexj) {
+    var countUnShown;
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard.length; j++) {
+            if (!gBoard[indexi][indexj].isShown) countUnShown++;
+            if (countUnShown > 1) return false;
+        }
+    }
+    return countUnShown;
+}
+
 
 
 
