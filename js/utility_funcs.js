@@ -25,6 +25,7 @@ function getEmptyCellIdx(board) {
 //renders the cell - BUG
 function renderCell(elCell, value) {
     elCell.innerHTML = value;
+    console.log('new current value:', elCell.innerHTML);
 }
 
 // counts the mines around each cell
@@ -46,26 +47,39 @@ function setMinesNegsCount(cellI, cellJ, board) {
 function revealBoard(board) {
     for (var i = 0; i < board.length; i++) {
         for (var j = 0; j < board.length; j++) {
-            var elCell = document.querySelector(`.unrevealed cell-${i}-${j}`);
-            console.log(document.querySelector(`.unrevealed cell-${i}-${j}`));
-            var cellContent; //not sure if needed yet
-            if (board[i][j].isMine) cellContent = MINE;
-            else cellContent = board[i][j].minesAroundCount
 
-            renderCell(elCell, cellContent);
+            var elCell = document.getElementsByClassName(`.unrevealed cell-${i}-${j}`);
+            var cellContent;
+            if (board[i][j].isMine) cellContent = MINE;
+            else cellContent = board[i][j].minesAroundCount;
+
+            board[i][j].isShown = true;
+            elCell.innerHTML = cellContent;
+            console.log('new cell value:', elCell.innerHTML);
         }
     }
 }
 
+function revealMines() {
 
+    for (var i = 0; i < gGame.minesLocArr; i++) {
+        var mineToRevealI = gGame.minesLocArr[i].i;
+        var mineToRevealJ = gGame.minesLocArr[i].j;
+        var elCell = document.getElementsByClassName(`.unrevealed cell-${mineToRevealI}-${mineToRevealJ}`);
+        elCell.innerHTML = MINE;
+    }
+    return;
+}
+
+// locating mines randomly in the board
 function getRandomMine(num) {
     var emptyArr = getEmptyCellIdx(gBoard);
-    // console.log('emptyArr:', emptyArr);
     for (var i = 0; i < num; i++) {
         var tmpIdx = getRandomInt(0, emptyArr.length - 1);
         var emptyCell = emptyArr[tmpIdx];
-        // console.log('emptyCell:', tmpIdx);
         var cellWithNewValue = gBoard[emptyCell.i][emptyCell.j];
+
+        gGame.minesLocArr.push({ i: emptyCell.i, j: emptyCell.j });
         cellWithNewValue.isMine = true;
         emptyArr.splice(tmpIdx, 1);
     }
@@ -91,6 +105,9 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function upDateScore() {
+
+}
 
 
 
