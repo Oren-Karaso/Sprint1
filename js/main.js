@@ -1,18 +1,18 @@
 
 'use strict'
 
-const SIZE = 8;
-const MINES = 12;
 const MINE = '💣';
 const FLAG = '⛳';
 
+var gSize = 8;
+var gMines = 12;
 
 var gBoard;
-var gBoardToShow;
 var gLevel = {
-    size: SIZE,
-    mines: MINES
+    size: gSize,
+    mines: gMines
 };
+
 var gGame = {
     isOn: false,
     shownCount: 0,
@@ -23,13 +23,15 @@ var gGame = {
     timerInterval: 0,
     elTimer: document.querySelector('.timer'),
     minesLocArr: [],
-}
-
+};
 
 function initGame() {
+    getGameLevel();
+    gGame.mineCounter = gMines;  // for some reason cannot initial it through reset function
 
+    // console.log('gMines:', gMines + 'gSize:', gSize + 'mineCounter:', gGame.mineCounter);
     gBoard = buildBoard();
-    getRandomMine(MINES);
+    getRandomMine(gMines);
     renderBoard(gBoard);
     console.log('mines location array:', gGame.minesLocArr);
     revealMines();
@@ -38,9 +40,9 @@ function initGame() {
 
 function buildBoard() {
     var board = [];
-    for (var i = 0; i < SIZE; i++) {
+    for (var i = 0; i < gSize; i++) {
         board.push([]);
-        for (var j = 0; j < SIZE; j++) {
+        for (var j = 0; j < gSize; j++) {
             var cell = {
                 minesAroundCount: 0,
                 isShown: false,
@@ -106,8 +108,6 @@ function checkGameOver() {
     clearInterval(gGame.timerInterval);
     revealMines();
     alert('Oh nooo! You have been exploded to pieces!');
-
-    setTimeout(resetGame, 3000);
 }
 
 function checkWin() {
@@ -115,16 +115,14 @@ function checkWin() {
 
     for (var i = 0; i < gBoard.length; i++) {
         for (var j = 0; j < gBoard.length; j++) {
-            if (!gBoard[i][j].isMine) {
-                if (!gBoard[i][j].isShown) return false;
-            }
+            if (gBoard[i][j].isMine && !gBoard[i][j].isMarked) return;
+            else continue;
         }
     }
     clearInterval(gGame.timerInterval);
     gGame.isOn = false;
     revealBoard(gBoard);
     alert('Congrats! you have survived!');
-    setTimeout(resetGame, 3000);
 }
 
 function cellClicked(elCell, i, j) {
@@ -135,9 +133,10 @@ function cellClicked(elCell, i, j) {
     if (gBoard[i][j].isMine) {
         gBoard[i][j].isShown = true;
         gGame.mineCounter--;
-        return checkGameOver();
+        checkGameOver();
     }
     else if (gBoard[i][j].isMarked) return;
+//    else if (gBoard[i][j].minesAroundCount === 0) expandShown(elCell, i, j);
     else {
         minesAround = gBoard[i][j].minesAroundCount;
         gBoard[i][j].isShown = true;
@@ -158,6 +157,36 @@ function cellMarked(elCell, i, j) {
     return false;
 }
 
-function expandShown(board, elCell) {
+function expandShown(elCell, cellI, cellJ) {
 
+    for (var i = cellI - 1; i <= cellI + 1; i++) {
+        if (i < 0 || i >= gBoard.length) continue;
+        for (var j = cellJ - 1; j <= cellJ + 1; j++) {
+            if (i === cellI && j === cellJ) continue;
+            if (j < 0 || j >= gBoard[i].length) continue;
+            if (gBoard[i][j].minesAroundCount === 0) {
+                var elCell = document.getElementsByClassName(`.unrevealed cell-${i}-${j}`);
+                console.log(elCell.innerText);
+                elCell.classList.add('revealed');
+                elCell.classList.remove('unrevealed');
+                elCell.innerHTML = 0;
+                expandShown(i, j);
+            }
+        }
+    }
+    // console.log('for i=', cellI + ' for j=', cellJ + ' countNeighbors:', countNeighbors);
+    // gBoard[cellI][cellJ].minesAroundCount = countNeighbors;
+}
+
+function getGameLevel() {
+    var level = +prompt('Please choose your game level: 1 beginner (4X4 2 mines), 2 Medium (8X8 12 mines) or 3 for Expert (12X12 30 mines)');
+    switch (level) {
+        case 1: gMines = 2, gSize = 4
+            break;
+        case 2: gMines = 12, gSize = 8
+            break;
+        case 3: gMines = 30, gSize = 12
+            break;
+        default: gMines = 2, gSize = 4
+    }
 }

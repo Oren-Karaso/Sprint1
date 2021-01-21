@@ -24,6 +24,8 @@ function getEmptyCellIdx(board) {
 
 //renders the cell - BUG
 function renderCell(elCell, value) {
+    elCell.classList.add('revealed');
+    elCell.classList.remove('unrevealed');
     elCell.innerHTML = value;
     console.log('new current value:', elCell.innerHTML);
 }
@@ -49,6 +51,9 @@ function revealBoard(board) {
         for (var j = 0; j < board.length; j++) {
 
             var elCell = document.getElementsByClassName(`.unrevealed cell-${i}-${j}`);
+            // elCell.classList.add('revealed');
+            // elCell.classList.remove('unrevealed');
+
             var cellContent;
             if (board[i][j].isMine) cellContent = MINE;
             else cellContent = board[i][j].minesAroundCount;
@@ -66,6 +71,8 @@ function revealMines() {
         var mineToRevealI = gGame.minesLocArr[i].i;
         var mineToRevealJ = gGame.minesLocArr[i].j;
         var elCell = document.getElementsByClassName(`.unrevealed cell-${mineToRevealI}-${mineToRevealJ}`);
+        // elCell.classList.add('revealed');
+        // elCell.classList.remove('unrevealed');
         elCell.innerHTML = MINE;
     }
     return;
