@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,12 +8,15 @@
     <link rel="stylesheet" href="css/style.css">
 
 </head>
-<body onload="initGame()"> 
 
-    <h2 onclick="resetGame()" style="display: block;">😃</h2>
+<body onload="initGame()">
+    <div class="info-box">
+        <h2 onclick="resetGame()" style="display: block;">😃</h2>
+        <h3 class="timer">00:00</h3>
+        <h3 class="lives-count">You have: <span>X</span> lives left</h3>
+    </div>
     <div class="board-container">
     </div>
-    <h3 class="timer">00:00</h3>
     <script src="js/main.js"></script>
     <script src="js/utility_funcs.js"></script>
 </body>

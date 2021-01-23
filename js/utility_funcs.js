@@ -1,12 +1,9 @@
-//renders the board
-
-
 // return an array of location objects of empty cells in given mat
 function getEmptyCellIdx(board) {
     var emptyArr = [];
 
     for (var i = 0; i < board.length; i++) {
-        for (var j = 0; j < board[0].length; j++) {
+        for (var j = 0; j < board.length; j++) {
             if (!board[i][j].isMine) {
                 var content = {
                     i: i,
@@ -22,12 +19,12 @@ function getEmptyCellIdx(board) {
 }
 
 
-//renders the cell - BUG
+//renders the cell
 function renderCell(elCell, value) {
     elCell.classList.add('revealed');
     elCell.classList.remove('unrevealed');
     elCell.innerHTML = value;
-    console.log('new current value:', elCell.innerHTML);
+    // console.log('new current value:', elCell.innerHTML);
 }
 
 // counts the mines around each cell
@@ -46,34 +43,36 @@ function setMinesNegsCount(cellI, cellJ, board) {
     return countNeighbors;
 }
 
+// cannot render- bug
 function revealBoard(board) {
     for (var i = 0; i < board.length; i++) {
         for (var j = 0; j < board.length; j++) {
+            if (!gBoard[i][j].isShown) {
+                var cellContent;
+                var elCell = document.getElementsByClassName(`unrevealed cell-${i}-${j}`);
+                if (board[i][j].isMine) cellContent = MINE;
+                else cellContent = board[i][j].minesAroundCount;
 
-            var elCell = document.getElementsByClassName(`.unrevealed cell-${i}-${j}`);
-            // elCell.classList.add('revealed');
-            // elCell.classList.remove('unrevealed');
-
-            var cellContent;
-            if (board[i][j].isMine) cellContent = MINE;
-            else cellContent = board[i][j].minesAroundCount;
-
-            board[i][j].isShown = true;
-            elCell.innerHTML = cellContent;
-            console.log('new cell value:', elCell.innerHTML);
+                board[i][j].isShown = true;
+                renderCell(elCell, cellContent);
+                // console.log('new cell value:', elCell.innerHTML);
+            }
         }
     }
+    return;
 }
 
+// cannot render- bug
 function revealMines() {
 
     for (var i = 0; i < gGame.minesLocArr; i++) {
         var mineToRevealI = gGame.minesLocArr[i].i;
         var mineToRevealJ = gGame.minesLocArr[i].j;
-        var elCell = document.getElementsByClassName(`.unrevealed cell-${mineToRevealI}-${mineToRevealJ}`);
-        // elCell.classList.add('revealed');
-        // elCell.classList.remove('unrevealed');
-        elCell.innerHTML = MINE;
+        if (!gBoard[mineToRevealI][mineToRevealJ].isShown) {
+            var elCell = document.getElementsByClassName(`unrevealed cell-${mineToRevealI}-${mineToRevealJ}`);
+            gBoard[mineToRevealI][mineToRevealJ].isShown = true;
+            renderCell(elCell, MINE);
+        }
     }
     return;
 }
@@ -90,8 +89,8 @@ function getRandomMine(num) {
         cellWithNewValue.isMine = true;
         emptyArr.splice(tmpIdx, 1);
     }
+    return;
 }
-
 
 function timer() {
     gGame.secsPassed++;
@@ -126,6 +125,9 @@ function isLastCell(indexi, indexj) {
     }
     return countUnShown;
 }
+
+
+
 
 
 
