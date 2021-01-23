@@ -11,26 +11,22 @@ body {
 .info-box {
     margin-left: auto;
     margin-right: auto;
-}
-
-.timer {
-    border: 2px solid black;
-    height:fit-content;
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
+    text-align: center;
 }
 
 .info-box h2 {
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
+    display: inline-block;
 }
 
 .lives-count {
     text-align: center;
-    margin-left: auto;
-    margin-right: auto;
+    display: inline-block;
+}
+
+.info-box button {
+    text-align: center;
+    display: inline-block;
+    margin-left: 2%;
 }
 
 table {
@@ -39,8 +35,18 @@ table {
     margin-right: auto;
 }
 
+.timer {
+    border: 2px solid black;
+    height: fit-content;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
 .unrevealed {
-    background-color: rgba(247, 225, 194, 0.692);
+    background: linear-gradient(to top, #f8f8f5, #a5a168, #695b08);
+    cursor: pointer;
     color: black;
     width: 40px;
     height: 40px;
@@ -49,10 +55,10 @@ table {
 }
 
 .revealed {
-    background-color: rgba(49, 118, 245, 0.822);
+    background: linear-gradient(to top, #a6dcf1, #3d6599, #091c72);
+    cursor: pointer;
     width: 40px;
     height: 40px;
     text-align: center;
     font-size: 1.5em;
 }
-

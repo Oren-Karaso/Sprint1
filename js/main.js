@@ -16,10 +16,22 @@ var gPresentLivesNumber = document.querySelector('.lives-count span');
 var gBoard;
 var gLevel = {
     size: 4,
-    mines: 2
+    mines: 2,
+};
+
+var gLastCell = {
+    content: 0,
+    i: 0,
+    j: 0,
+    isMarked: false,
+    isShown: false,
+    isMine: false,
+    minesAroundCount: 0
+
 };
 
 var gGame = {
+    undoBtn: 1,
     isOn: false,
     isReseted: false,
     shownCount: 0,
@@ -35,8 +47,10 @@ var gGame = {
 
 
 function initGame() {
-    if (!gGame.isReseted) getGameLevel();
-
+    if (!gGame.isReseted) {
+        getGameLevel();
+        gGame.isReseted = false;
+    }
     gPresentLivesNumber.innerText = gGame.howManyLives;
     gGame.minesToWin = gLevel.mines;
     gBoard = buildBoard();
@@ -88,10 +102,10 @@ function resetGame() {
 
     gEmoji.innerText = '😃';
 
+    gGame.undoBtn = 1;
     gGame.isOn = false;
     gGame.shownCount = 0;
     gGame.markedCount = 0;
-    gGame.minesToWin = gLevel.mines;  //???not working for some reason, initiate at initGame()
     gGame.secsPassed = 0;
     gGame.minPassed = 0;
     gGame.timerInterval = 0;
@@ -127,7 +141,6 @@ function checkGameOver() {
 }
 
 function checkWin() {
-    // console.log('gGame.minesToWin:', gGame.minesToWin)
     if (gGame.minesToWin !== 0) return false;
 
     for (var i = 0; i < gBoard.length; i++) {
@@ -164,6 +177,7 @@ function cellClicked(elCell, i, j) {
         gEmoji.innerText = '🤯';
         gBoard[i][j].isShown = true;
         cellContent = MINE;
+        // updateLastCell(i, j, cellContent);
         renderCell(elCell, cellContent);
 
         gGame.minesToWin--;
@@ -178,6 +192,7 @@ function cellClicked(elCell, i, j) {
     else {
         cellContent = gBoard[i][j].minesAroundCount === 0 ? '' : gBoard[i][j].minesAroundCount;
         gBoard[i][j].isShown = true;
+        // updateLastCell(i, j, cellContent);
         renderCell(elCell, cellContent);
         checkWin();
     }
@@ -192,6 +207,7 @@ function cellMarked(elCell, i, j) {
         if (gBoard[i][j].isMine) gGame.minesToWin--;
 
         renderCell(elCell, FLAG);
+        // updateLastCell(i, j, elCell.innerText);
     } else return;
 
     checkWin();
@@ -240,4 +256,36 @@ function manageRecord() {
         localStorage.setItem('record', gRecord)
         alert('Great!, you set a new record!');
     }
+}
+
+function updateLastCell(i, j, content) {
+    gLastCell.i = i;
+    gLastCell.j = j;
+    gLastCell.isShown = gGame[i][j].isShown;
+    gLastCell.isMarked = gGame[i][j].isMarked;
+    gLastCell.isMine = gGame[i][j].isMine;
+    gLastCell.minesAroundCount = gGame[i][j].minesAroundCount;
+    gLastCell.content = content;
+}
+
+function undo() {
+    if (!gGame.isOn) return alert('Game is over, cannot undo');
+    if (gGame.undoBtn !== 1) return alert('Already used your undo option');
+
+    if (gLastCell.content === MINE) {
+        gGame.howManyLives++;
+        gGame.minesToWin++;
+    }
+
+    gBoard[gLastCell.i][gLastCell.j].minesAroundCount = gLastCell.minesAroundCount;
+    gBoard[gLastCell.i][gLastCell.j].isMine = gLastCell.isMine;
+    gBoard[gLastCell.i][gLastCell.j].isMarked = gLastCell.isMarked;
+    gBoard[gLastCell.i][gLastCell.j].isShown = gLastCell.isShown;
+
+    var elCell = document.getElementsByClassName(`revealed cell-${i}-${j}`);
+    elCell.innerText = gLastCell.content;
+    elCell.classList.add('unrevealed');
+    elCell.classList.remove('revealed');
+
+    gGame.undoBtn--;
 }

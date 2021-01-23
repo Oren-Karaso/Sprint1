@@ -13,8 +13,6 @@ function getEmptyCellIdx(board) {
             }
         }
     }
-    // console.log('emptyArr:', emptyArr);
-
     return emptyArr;
 }
 
@@ -24,7 +22,6 @@ function renderCell(elCell, value) {
     elCell.classList.add('revealed');
     elCell.classList.remove('unrevealed');
     elCell.innerHTML = value;
-    // console.log('new current value:', elCell.innerHTML);
 }
 
 // counts the mines around each cell
@@ -43,7 +40,7 @@ function setMinesNegsCount(cellI, cellJ, board) {
     return countNeighbors;
 }
 
-// cannot render- bug
+// reveals the board completely when winnig- cannot render- bug
 function revealBoard(board) {
     for (var i = 0; i < board.length; i++) {
         for (var j = 0; j < board.length; j++) {
@@ -55,14 +52,13 @@ function revealBoard(board) {
 
                 board[i][j].isShown = true;
                 renderCell(elCell, cellContent);
-                // console.log('new cell value:', elCell.innerHTML);
             }
         }
     }
     return;
 }
 
-// cannot render- bug
+// reveals the mines completely when losing- cannot render- bug
 function revealMines() {
 
     for (var i = 0; i < gGame.minesLocArr; i++) {
