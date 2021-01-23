@@ -176,7 +176,7 @@ function cellClicked(elCell, i, j) {
         checkGameOver();
     } //else if (gBoard[i][j].minesAroundCount === 0) expandShown(elCell, i, j);
     else {
-        cellContent = gBoard[i][j].minesAroundCount;
+        cellContent = gBoard[i][j].minesAroundCount === 0 ? '' : gBoard[i][j].minesAroundCount;
         gBoard[i][j].isShown = true;
         renderCell(elCell, cellContent);
         checkWin();
@@ -224,13 +224,13 @@ function expandShown(elCell, cellI, cellJ) {
 function getGameLevel() {
     var level = +prompt('Please choose your game level: 1 beginner (4X4 2 mines), 2 Medium (8X8 12 mines) or 3 for Expert (12X12 30 mines)');
     switch (level) {
-        case 1: gLevel.mines = 2, gLevel.size = 4
+        case 1: gLevel.mines = 2, gLevel.size = 4, gGame.howManyLives = 1
             break;
         case 2: gLevel.mines = 12, gLevel.size = 8
             break;
         case 3: gLevel.mines = 30, gLevel.size = 12
             break;
-        default: gLevel.mines = 2, gLevel.size = 4
+        default: gLevel.mines = 2, gLevel.size = 4, gGame.howManyLives = 1
     }
 }
 
