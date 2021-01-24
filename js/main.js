@@ -47,10 +47,8 @@ var gGame = {
 
 
 function initGame() {
-    if (!gGame.isReseted) {
-        getGameLevel();
-        gGame.isReseted = false;
-    }
+    if (!gGame.isReseted) getGameLevel();
+    
     gPresentLivesNumber.innerText = gGame.howManyLives;
     gGame.minesToWin = gLevel.mines;
     gBoard = buildBoard();
@@ -124,6 +122,7 @@ function firstClick(i, j) {
     else {
         gGame.timerInterval = setInterval(timer, 1000);
         gGame.isOn = true;
+        gGame.isReseted = false;
     }
     return;
 }
