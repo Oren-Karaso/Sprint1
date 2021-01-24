@@ -106,7 +106,7 @@ function resetGame() {
     gGame.markedCount = 0;
     gGame.secsPassed = 0;
     gGame.minPassed = 0;
-    gGame.timerInterval = 0;
+    gGame.timerInterval = null;
     gGame.elTimer.innerText = `0${gGame.minPassed}:0${gGame.secsPassed}`;
     gGame.minesLocArr = [];
     gGame.howManyLives = 3;
@@ -166,6 +166,7 @@ function cellClicked(elCell, i, j) {
         if (!gGame.minesToWin) return;
         if (gGame.howManyLives === 0) return;
         else firstClick(i, j);
+        return;
     }
 
     if (gBoard[i][j].isShown) return;
